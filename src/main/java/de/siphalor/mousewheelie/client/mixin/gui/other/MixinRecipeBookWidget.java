@@ -34,6 +34,8 @@ import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.network.packet.c2s.play.CraftRequestC2SPacket;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeMatcher;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.MathHelper;
@@ -141,7 +143,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						if (oldRecipe != recipe || craftingScreenHandler.slots.get(resSlot).getStack().isEmpty() || canCraftMore(recipe)) {
 							InteractionManager.push(new InteractionManager.PacketEvent(new CraftRequestC2SPacket(craftingScreenHandler.syncId, recipe, true), (triggerType) -> MWClient.lastUpdatedSlot >= craftingScreenHandler.getCraftingSlotCount()));
 						}
-						int cnt = recipeFinder.countCrafts(recipe, recipe.getOutput().getMaxCount(), null);
+						int cnt = recipeFinder.countCrafts(recipe, recipe.getOutput(client.world.getRegistryManager()).getMaxCount(), null);
 						for (int i = 1; i < cnt; i++) {
 							InteractionManager.pushClickEvent(craftingScreenHandler.syncId, resSlot, 1, SlotActionType.THROW);
 						}
@@ -163,7 +165,9 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Unique
 	private boolean canCraftMore(Recipe<?> recipe) {
-		return getBiggestCraftingStackSize() < recipeFinder.countCrafts(recipe, recipe.getOutput().getMaxCount(), null);
+		if (client.world == null)
+			return false;
+		return getBiggestCraftingStackSize() < recipeFinder.countCrafts(recipe, recipe.getOutput(client.world.getRegistryManager()).getMaxCount(), null);
 	}
 
 	@Unique

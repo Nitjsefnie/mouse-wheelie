@@ -20,9 +20,14 @@ package de.siphalor.mousewheelie.client.util;
 import de.siphalor.mousewheelie.MWConfig;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistryView;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.data.report.DynamicRegistriesProvider;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryEntryLookup;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 
 import java.util.ArrayList;
@@ -62,11 +67,12 @@ public class CreativeSearchOrder {
 			FeatureSet enabledFeatures = client.world.getEnabledFeatures();
 
 			if (stackToSearchPositionLookup.isEmpty() || !Objects.equals(enabledFeatures, lastFeatureSet)) {
-				ItemGroups.updateDisplayParameters(enabledFeatures, true);
+				// ItemGroups.updateDisplayParameters(enabledFeatures, true);
+				ItemGroups.updateDisplayContext(enabledFeatures, true, client.world.getRegistryManager());
 				Collection<ItemStack> displayStacks = new ArrayList<>(ItemGroups.SEARCH.getDisplayStacks());
 				new Thread(() -> {
 					Lock lock = stackToSearchPositionLookupLock.writeLock();
-					lock.lock();
+				 	lock.lock();
 					stackToSearchPositionLookup.clear();
 					if (displayStacks.isEmpty()) {
 						lock.unlock();

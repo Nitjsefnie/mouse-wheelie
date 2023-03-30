@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.1-SNAPSHOT'
     id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '2.1.1'
@@ -15,6 +15,9 @@ version = project.mod_version + "+mc" + project.minecraft_version
 group = project.maven_group
 
 repositories {
+	flatDir {
+		dirs "libs"
+	}
 	mavenLocal()
 	maven {
 		name "Fabric"
@@ -50,21 +53,21 @@ dependencies {
 
 	modCompileOnly("com.terraformersmc:modmenu:4.0.6")
 
-	include(modApi("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.7.1+mc1.19.3"))
-	include(modApi("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.3.1+mc1.19.3"))
-	include(modApi("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.2.1+mc1.19.3"))
-	include(modApi("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.1.1+mc1.19.3"))
-	include(modApi("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.1.3+mc1.19.3")) {
+	include(modApi("de.siphalor.tweed4:tweed4-base:${project.tweed_base}"))
+	include(modApi("de.siphalor.tweed4:tweed4-annotated:${project.tweed_annotated}"))
+	include(modApi("de.siphalor.tweed4:tweed4-data:${project.tweed_data}"))
+	include(modApi("de.siphalor.tweed4:tweed4-data-hjson:${project.tweed_data_hjson}"))
+	include(modApi("de.siphalor.tweed4:tweed4-tailor-screen:${project.tweed_tailor_screen}")) {
 		exclude module: "modmenu"
 	}
-	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.1.3+mc1.19.3")) {
+	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat:${project.tweed_tailor_coat}")) {
 		exclude module: "modmenu"
 	}
-	include(modApi("de.siphalor:coat-$minecraft_major_version:$coat_version")) {
+	include(modApi("de.siphalor:coat:$coat_version")) {
 		exclude module: "modmenu"
 	}
 
-	modImplementation(include("de.siphalor:amecsapi-$minecraft_major_version:${project.amecs_version}")) {
+	modImplementation(include("de.siphalor:amecsapi:${project.amecs_version}")) {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
